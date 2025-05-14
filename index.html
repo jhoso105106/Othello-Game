@@ -8,18 +8,27 @@
 </head>
 <body>
     <h1>オセロゲーム</h1>
-    <div id="game-info">
+    <div id="player-names">
+        <label>黒: <input type="text" id="player-black" value="黒プレイヤー"></label>
+        <label>白: <input type="text" id="player-white" value="白プレイヤー"></label>
+        <button id="start-button">ゲーム開始</button>
+    </div>
+    <div id="game-info" style="display:none;">
         <p>現在のターン: <span id="current-player">黒</span></p>
         <button id="reset-button">リセット</button>
     </div>
     <div id="game-container">
         <div id="board"></div>
     </div>
+    <div id="history">
+        <h2>勝敗履歴</h2>
+        <ul id="history-list"></ul>
+    </div>
     <script src="app.js"></script>
     <script>
         // ゲーム初期化
         window.onload = function() {
-            initializeGame();
+            // ここはapp.jsで制御するので空でOK
         };
     </script>
 </body>
