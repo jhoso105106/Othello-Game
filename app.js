@@ -13,25 +13,25 @@ function initializeGame() {
     board[4][4] = 'white';
     currentPlayer = 'black';
     gameActive = true;
-    renderBoard();
+    renderBoard(); // ←これを必ず呼ぶ
 }
 
 function renderBoard() {
-    const boardElement = document.getElementById('board');
-    boardElement.innerHTML = '';
+    const boardDiv = document.getElementById('board');
+    boardDiv.innerHTML = '';
     for (let row = 0; row < boardSize; row++) {
         for (let col = 0; col < boardSize; col++) {
             const cell = document.createElement('div');
-            cell.classList.add('cell');
+            cell.className = 'cell';
             cell.dataset.row = row;
             cell.dataset.col = col;
             if (board[row][col]) {
                 const piece = document.createElement('div');
-                piece.classList.add('piece', board[row][col]);
+                piece.className = 'piece ' + board[row][col];
                 cell.appendChild(piece);
             }
-            cell.addEventListener('click', () => makeMove(row, col));
-            boardElement.appendChild(cell);
+            cell.onclick = () => makeMove(row, col);
+            boardDiv.appendChild(cell);
         }
     }
 }
