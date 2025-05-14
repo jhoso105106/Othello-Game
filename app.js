@@ -108,6 +108,8 @@ function checkWinner() {
 // リセットボタンにイベントリスナーを追加
 document.getElementById('reset-button').addEventListener('click', () => {
     initializeGame();
+    document.getElementById('game-info').style.display = '';
+    document.getElementById('player-names').style.display = 'none';
 });
 
 // Initialize the game on page load
