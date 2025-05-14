@@ -112,3 +112,10 @@ document.getElementById('reset-button').addEventListener('click', () => {
 
 // Initialize the game on page load
 window.onload = initializeGame;
+
+<script>
+    // ゲーム初期化
+    window.onload = function() {
+        // ここはapp.jsで制御するので空でOK
+    };
+</script>
