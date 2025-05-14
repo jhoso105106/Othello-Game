@@ -23,6 +23,7 @@ h1 {
     gap: 0; /* セル間の隙間をなくす */
     background-color: #006400; /* 緑色の背景 */
     border: 2px solid black; /* ボード全体の枠線 */
+    margin: 0 auto; /* これを追加！ */
 }
 
 .cell {
