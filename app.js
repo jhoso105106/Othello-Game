@@ -102,7 +102,23 @@ function flipPieces(row, col) {
 }
 
 function checkWinner() {
-    // Logic to check for a winner
+    let blackCount = 0;
+    let whiteCount = 0;
+    for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
+            if (board[row][col] === 'black') blackCount++;
+            if (board[row][col] === 'white') whiteCount++;
+        }
+    }
+    let winnerText = '';
+    if (blackCount > whiteCount) {
+        winnerText = `黒（${blackCount}）の勝ち！`;
+    } else if (whiteCount > blackCount) {
+        winnerText = `白（${whiteCount}）の勝ち！`;
+    } else {
+        winnerText = '引き分け！';
+    }
+    alert(winnerText);
 }
 
 // リセットボタンにイベントリスナーを追加
