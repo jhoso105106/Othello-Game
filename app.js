@@ -72,7 +72,7 @@ function makeMove(row, col) {
         // 両者とも置けない場合は終了
         gameActive = false;
         renderBoard();
-        checkWinner();
+        checkWinner(); // ←ここだけでOK
         return;
     }
     renderBoard();
