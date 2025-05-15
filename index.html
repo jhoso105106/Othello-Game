@@ -37,6 +37,35 @@
             document.getElementById('player-select').style.display = '';
             document.getElementById('game-info').style.display = 'none';
         });
+
+        document.getElementById('start-button').onclick = function() {
+            // プレイヤーの色を取得
+            const selectedColor = document.querySelector('input[name="player-color"]:checked').value;
+            const blackInput = document.getElementById('player-black');
+            const whiteInput = document.getElementById('player-white');
+
+            // 名前自動セット
+            if (selectedColor === 'black') {
+                if (!blackInput.value || blackInput.value === '黒プレイヤー') blackInput.value = 'あなた';
+                if (!whiteInput.value || whiteInput.value === '白プレイヤー') whiteInput.value = 'パソコン';
+            } else {
+                if (!whiteInput.value || whiteInput.value === '白プレイヤー') whiteInput.value = 'あなた';
+                if (!blackInput.value || blackInput.value === '黒プレイヤー') blackInput.value = 'パソコン';
+            }
+
+            // ゲーム画面切り替え
+            document.getElementById('player-names').style.display = 'none';
+            document.getElementById('player-select').style.display = 'none';
+            document.getElementById('game-info').style.display = '';
+
+            // ゲーム初期化
+            initializeGame();
+
+            // ★ここがポイント：白で遊ぶ場合はAI（黒）が最初に打つ
+            if (selectedColor === 'white') {
+                setTimeout(aiMove, 500); // 少し待ってからAIが打つ
+            }
+        };
     </script>
 </body>
 </html>

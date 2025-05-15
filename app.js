@@ -140,16 +140,17 @@ function flipPieces(row, col) {
 }
 
 // 勝敗を履歴に追加する関数
-function saveResult(winner) {
+function saveResult(winner, blackCount, whiteCount) {
     const date = new Date().toLocaleString();
-    // ゲーム終了時点での名前を取得
     const blackName = document.getElementById('player-black').value || '黒プレイヤー';
     const whiteName = document.getElementById('player-white').value || '白プレイヤー';
     history.unshift({
         date,
         winner: winner ? (winner === 'black' ? blackName : whiteName) : '引き分け',
         black: blackName,
-        white: whiteName
+        white: whiteName,
+        blackCount,
+        whiteCount
     });
     localStorage.setItem('othelloHistory', JSON.stringify(history));
     renderHistory();
@@ -177,7 +178,7 @@ function checkWinner() {
         winnerText = '引き分け！';
     }
     alert(winnerText);
-    saveResult(winner);
+    saveResult(winner, blackCount, whiteCount); // ←ここを修正
 }
 
 // リセットボタンにイベントリスナーを追加
@@ -246,7 +247,7 @@ function renderHistory() {
     list.innerHTML = '';
     history.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = `${item.date} - 勝者: ${item.winner}（黒: ${item.black} vs 白: ${item.white}）`;
+        li.textContent = `${item.date} - 勝者: ${item.winner}（${item.black}: ${item.blackCount} 対 ${item.white}: ${item.whiteCount}）`;
         list.appendChild(li);
     });
 }
@@ -255,5 +256,45 @@ function renderHistory() {
 window.onload = function() {
     renderHistory();
     initializeGame();
+};
+
+document.getElementById('reset-button').addEventListener('click', () => {
+    initializeGame();
+    // 名前入力欄と開始ボタンを再表示
+    document.getElementById('player-names').style.display = '';
+    document.getElementById('player-select').style.display = '';
+    document.getElementById('game-info').style.display = 'none';
+
+    // 名前欄を初期値にリセット
+    document.getElementById('player-black').value = '黒プレイヤー';
+    document.getElementById('player-white').value = '白プレイヤー';
+});
+
+// ゲーム開始ボタン押下時の処理
+document.getElementById('start-button').onclick = function() {
+    const selectedColor = document.querySelector('input[name="player-color"]:checked').value;
+    const blackInput = document.getElementById('player-black');
+    const whiteInput = document.getElementById('player-white');
+
+    if (selectedColor === 'black') {
+        // 黒が人間
+        if (!blackInput.value || blackInput.value === '黒プレイヤー') {
+            blackInput.value = 'あなた';
+        }
+        if (!whiteInput.value || whiteInput.value === '白プレイヤー') {
+            whiteInput.value = 'パソコン';
+        }
+    } else {
+        // 白が人間
+        if (!whiteInput.value || whiteInput.value === '白プレイヤー') {
+            whiteInput.value = 'あなた';
+        }
+        if (!blackInput.value || blackInput.value === '黒プレイヤー') {
+            blackInput.value = 'パソコン';
+        }
+    }
+
+    // ここに既存のゲーム開始処理を続けてください
+    // 例: initializeGame(); など
 };
 
