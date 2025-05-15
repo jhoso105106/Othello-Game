@@ -4,6 +4,8 @@ const boardSize = 8;
 let board = [];
 let currentPlayer = 'black';
 let gameActive = true;
+let humanColor = 'black'; // デフォルトは黒
+let aiColor = 'white';
 
 function initializeGame() {
     board = Array.from({ length: boardSize }, () => Array(boardSize).fill(null));
@@ -61,21 +63,23 @@ function makeMove(row, col) {
     board[row][col] = currentPlayer;
     flipPieces(row, col);
 
-    // ターン切り替え
     const otherPlayer = currentPlayer === 'black' ? 'white' : 'black';
     if (hasValidMove(otherPlayer)) {
         currentPlayer = otherPlayer;
     } else if (hasValidMove(currentPlayer)) {
-        // 相手が置けない場合は自分のターン継続（パス）
         alert((otherPlayer === 'black' ? '黒' : '白') + 'は置ける場所がありません。パスします。');
     } else {
-        // 両者とも置けない場合は終了
         gameActive = false;
         renderBoard();
-        checkWinner(); // ←ここだけでOK
+        checkWinner();
         return;
     }
     renderBoard();
+
+    // AIのターンなら自動で打つ
+    if (currentPlayer === aiColor) {
+        setTimeout(aiMove, 500); // 少し待ってからAIが打つ
+    }
 }
 
 function isValidMove(row, col) {
@@ -158,6 +162,48 @@ document.getElementById('reset-button').addEventListener('click', () => {
     document.getElementById('game-info').style.display = '';
     document.getElementById('player-names').style.display = 'none';
 });
+
+// プレイヤー選択
+document.querySelectorAll('input[name="player-color"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        humanColor = e.target.value;
+        aiColor = (humanColor === 'black') ? 'white' : 'black';
+    });
+});
+
+// ゲーム開始ボタン
+document.getElementById('start-button').onclick = function() {
+    // プレイヤー名取得など
+    // ...既存の処理...
+    initializeGame();
+
+    // 人間が白を選んでいたら、AI（黒）が最初に打つ
+    if (humanColor === 'white') {
+        setTimeout(aiMove, 500);
+    }
+};
+
+// AIの手を打つ
+function aiMove() {
+    if (!gameActive) return;
+    // 置ける場所をリストアップ
+    let moves = [];
+    for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
+            const tmp = currentPlayer;
+            currentPlayer = aiColor;
+            if (board[row][col] === null && isValidMove(row, col)) {
+                moves.push([row, col]);
+            }
+            currentPlayer = tmp;
+        }
+    }
+    if (moves.length > 0) {
+        // ランダムで1つ選んで打つ
+        const [row, col] = moves[Math.floor(Math.random() * moves.length)];
+        makeMove(row, col);
+    }
+}
 
 // Initialize the game on page load
 window.onload = initializeGame;
