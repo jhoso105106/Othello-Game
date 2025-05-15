@@ -7,6 +7,9 @@ let gameActive = true;
 let humanColor = 'black'; // デフォルトは黒
 let aiColor = 'white';
 
+// 履歴をlocalStorageから取得
+let history = JSON.parse(localStorage.getItem('othelloHistory') || '[]');
+
 function initializeGame() {
     board = Array.from({ length: boardSize }, () => Array(boardSize).fill(null));
     board[3][3] = 'white';
@@ -136,6 +139,23 @@ function flipPieces(row, col) {
     }
 }
 
+// 勝敗を履歴に追加する関数
+function saveResult(winner) {
+    const date = new Date().toLocaleString();
+    // ゲーム終了時点での名前を取得
+    const blackName = document.getElementById('player-black').value || '黒プレイヤー';
+    const whiteName = document.getElementById('player-white').value || '白プレイヤー';
+    history.unshift({
+        date,
+        winner: winner ? (winner === 'black' ? blackName : whiteName) : '引き分け',
+        black: blackName,
+        white: whiteName
+    });
+    localStorage.setItem('othelloHistory', JSON.stringify(history));
+    renderHistory();
+}
+
+// 勝敗判定後に呼び出す
 function checkWinner() {
     let blackCount = 0;
     let whiteCount = 0;
@@ -145,15 +165,19 @@ function checkWinner() {
             if (board[row][col] === 'white') whiteCount++;
         }
     }
+    let winner = null;
     let winnerText = '';
     if (blackCount > whiteCount) {
+        winner = 'black';
         winnerText = `黒（${blackCount}）の勝ち！`;
     } else if (whiteCount > blackCount) {
+        winner = 'white';
         winnerText = `白（${whiteCount}）の勝ち！`;
     } else {
         winnerText = '引き分け！';
     }
     alert(winnerText);
+    saveResult(winner);
 }
 
 // リセットボタンにイベントリスナーを追加
@@ -173,14 +197,25 @@ document.querySelectorAll('input[name="player-color"]').forEach(radio => {
 
 // ゲーム開始ボタン
 document.getElementById('start-button').onclick = function() {
-    // プレイヤー名取得など
-    // ...既存の処理...
-    initializeGame();
+    // プレイヤーの色を取得
+    const selectedColor = document.querySelector('input[name="player-color"]:checked').value;
+    const blackInput = document.getElementById('player-black');
+    const whiteInput = document.getElementById('player-white');
 
-    // 人間が白を選んでいたら、AI（黒）が最初に打つ
-    if (humanColor === 'white') {
-        setTimeout(aiMove, 500);
+    if (selectedColor === 'black') {
+        // 黒が人間、白はパソコン
+        if (!whiteInput.value || whiteInput.value === '白プレイヤー') {
+            whiteInput.value = 'パソコン';
+        }
+    } else {
+        // 白が人間、黒はパソコン
+        if (!blackInput.value || blackInput.value === '黒プレイヤー') {
+            blackInput.value = 'パソコン';
+        }
     }
+
+    // ここに既存のゲーム開始処理を続けてください
+    // 例: initializeGame(); など
 };
 
 // AIの手を打つ
@@ -205,6 +240,20 @@ function aiMove() {
     }
 }
 
+// 履歴を表示する関数
+function renderHistory() {
+    const list = document.getElementById('history-list');
+    list.innerHTML = '';
+    history.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.date} - 勝者: ${item.winner}（黒: ${item.black} vs 白: ${item.white}）`;
+        list.appendChild(li);
+    });
+}
+
 // Initialize the game on page load
-window.onload = initializeGame;
+window.onload = function() {
+    renderHistory();
+    initializeGame();
+};
 

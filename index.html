@@ -29,5 +29,14 @@
         <ul id="history-list"></ul>
     </div>
     <script src="app.js"></script>
+    <script>
+        document.getElementById('reset-button').addEventListener('click', () => {
+            initializeGame();
+            // 名前入力欄と開始ボタンを再表示
+            document.getElementById('player-names').style.display = '';
+            document.getElementById('player-select').style.display = '';
+            document.getElementById('game-info').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
