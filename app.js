@@ -36,15 +36,46 @@ function renderBoard() {
     }
 }
 
+function hasValidMove(player) {
+    for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
+            if (board[row][col] === null) {
+                // 一時的にcurrentPlayerを切り替えて判定
+                const tmp = currentPlayer;
+                currentPlayer = player;
+                if (isValidMove(row, col)) {
+                    currentPlayer = tmp;
+                    return true;
+                }
+                currentPlayer = tmp;
+            }
+        }
+    }
+    return false;
+}
+
 function makeMove(row, col) {
     if (!gameActive || board[row][col] !== null || !isValidMove(row, col)) {
         return;
     }
     board[row][col] = currentPlayer;
     flipPieces(row, col);
-    currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+
+    // ターン切り替え
+    const otherPlayer = currentPlayer === 'black' ? 'white' : 'black';
+    if (hasValidMove(otherPlayer)) {
+        currentPlayer = otherPlayer;
+    } else if (hasValidMove(currentPlayer)) {
+        // 相手が置けない場合は自分のターン継続（パス）
+        alert((otherPlayer === 'black' ? '黒' : '白') + 'は置ける場所がありません。パスします。');
+    } else {
+        // 両者とも置けない場合は終了
+        gameActive = false;
+        renderBoard();
+        checkWinner();
+        return;
+    }
     renderBoard();
-    checkWinner();
 }
 
 function isValidMove(row, col) {
